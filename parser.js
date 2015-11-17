@@ -9,11 +9,12 @@
         // parse all values include number and boolean to string type.
         option.stringOnly = option.stringOnly || false;
 
-        var ENDREG = /([}\]]$|[}\]](?=[,}\]]))/;
+        var ENDREG = /([}\]\)]$|[}\]\)](?=[,}\]]))/;
         var NULLREG = /^null$/;
         var BOOLREG = /^true$|^false$/;
         var NUMREG = /^-?\d+\.?\d*$/;
         var MARKREG = /<\d+>/;
+        var TYPEREG = /\w+\(/;
 
         var tree = s;
         var parts = [];
@@ -23,20 +24,36 @@
             var endTag = ENDREG.exec(tree);
             var endPos = endTag.index + 1;
 
-            var startSym = String.fromCharCode(endTag[0].charCodeAt() - 2);
-            var endSym = endTag[0];
+            var startSym;
+            var endSym;
+
+            if (endTag[0] != ')') {
+                startSym = String.fromCharCode(endTag[0].charCodeAt() - 2);
+                endSym = endTag[0];
+            } else {
+                var _part = tree.substring(0, endPos);
+                var match = _part.match(TYPEREG);
+                startSym = match[0];
+                endSym = endTag[0];
+            }
 
             var startPos = tree.lastIndexOf(startSym, endPos);
             var part = tree.substring(startPos, endPos);
 
             // remove clover
-            part = part.substring(1, part.length - 1);
+            part = part.substring(startSym.length, part.length - 1);
 
             if (!part) {
                 break;
             }
 
             if (startSym != '[') {
+                if (endSym == ')') {
+                    // replace type as object
+                    startSym = '{';
+                    endSym = '}';
+                }
+
                 // format keys and values
                 part = part.replace(/([^=,\s]+)=([^,]+)/g, function(main, $1, $2) {
                     var pre = '"' + $1 + '"';
