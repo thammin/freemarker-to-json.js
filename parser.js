@@ -32,6 +32,10 @@
             // remove clover
             part = part.substring(1, part.length - 1);
 
+            if (!part) {
+                break;
+            }
+
             if (startSym != '[') {
                 // format keys and values
                 part = part.replace(/([^=,\s]+)=([^,]+)/g, function(main, $1, $2) {
