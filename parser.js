@@ -9,12 +9,19 @@
         // parse all values include number and boolean to string type.
         option.stringOnly = option.stringOnly || false;
 
-        var ENDREG = /([}\]\)]$|[}\]\)](?=[,}\]]))/;
+        var ENDREG = /([\)]|[}\]\)]$|[}\]\)](?=[,}\]]))/;
         var NULLREG = /^null$/;
         var BOOLREG = /^true$|^false$/;
         var NUMREG = /^-?\d+\.?\d*$/;
         var MARKREG = /<\d+>/;
         var TYPEREG = /\w+\(/;
+
+        var alias = {
+            '(': '<ob>',
+            ')': '<cb>',
+            '[': '<osb>',
+            ']': '<csb>'
+        };
 
         var tree = s;
         var parts = [];
@@ -22,7 +29,7 @@
 
         while (ENDREG.test(tree)) {
             var endTag = ENDREG.exec(tree);
-            var endPos = endTag.index + 1;
+            var endPos = endTag.index;
 
             var startSym;
             var endSym;
@@ -31,44 +38,59 @@
                 startSym = String.fromCharCode(endTag[0].charCodeAt() - 2);
                 endSym = endTag[0];
             } else {
-                var _part = tree.substring(0, endPos);
-                var match = _part.match(TYPEREG);
-                startSym = match[0];
-                endSym = endTag[0];
+                var _startSym = '(';
+                var _part = tree.substring(0, endPos + 1);
+                var _startPos = _part.lastIndexOf(_startSym);
+                var prevChar = _part[_startPos - 1];
+
+                if (!/\w/.test(prevChar)) {
+                    tree = replaceAt(tree, alias[endTag[0]], endPos);
+                    tree = replaceAt(tree, alias[_startSym], _startPos);
+                    continue;
+                } else {
+                    var match = _part.match(TYPEREG);
+                    startSym = match[0];
+                    endSym = endTag[0];
+                }
             }
 
-            var startPos = tree.lastIndexOf(startSym, endPos);
-            var part = tree.substring(startPos, endPos);
+            var startPos = tree.lastIndexOf(startSym, endPos + 1);
+            var part = tree.substring(startPos, endPos + 1);
+
+            var prevChar = tree[startPos - 1];
+            if (startSym == '[' && prevChar && !/[\[=,]/.test(prevChar)) {
+                tree = replaceAt(tree, alias[endSym], endPos);
+                tree = replaceAt(tree, alias[startSym], startPos);
+                continue;
+            }
 
             // remove clover
             part = part.substring(startSym.length, part.length - 1);
 
-            if (!part) {
-                break;
-            }
+            if (part) {
+                if (startSym != '[') {
+                    if (endSym == ')') {
+                        // replace type as object
+                        startSym = '{';
+                        endSym = '}';
+                    }
 
-            if (startSym != '[') {
-                if (endSym == ')') {
-                    // replace type as object
-                    startSym = '{';
-                    endSym = '}';
+                    // format keys and values
+                    part = part.replace(/([^=,\s]+)=([^,]+)/g, function(main, $1, $2) {
+                        var pre = '"' + $1 + '"';
+                        var suf = isString($2, option.stringOnly) ? '"' + $2 + '"' : $2;
+                        return pre + ':' + suf;
+                    });
+                } else {
+                    // format array values
+                    part = part.split(', ').map(function(value) {
+                        return isString(value, option.stringOnly) ? '"' + value + '"' : value;
+                    }).join(', ');
                 }
-
-                // format keys and values
-                part = part.replace(/([^=,\s]+)=([^,]+)/g, function(main, $1, $2) {
-                    var pre = '"' + $1 + '"';
-                    var suf = isString($2, option.stringOnly) ? '"' + $2 + '"' : $2;
-                    return pre + ':' + suf;
-                });
-            } else {
-                // format array values
-                part = part.split(', ').map(function(value) {
-                    return isString(value, option.stringOnly) ? '"' + value + '"' : value;
-                }).join(', ');
             }
 
             // insert marker
-            tree = tree.substring(0, startPos) + '<' + count + '>' + tree.substring(endPos, tree.length);
+            tree = tree.substring(0, startPos) + '<' + count + '>' + tree.substring(endPos + 1, tree.length);
 
             // cache part of data
             parts[count] = startSym + part + endSym;
@@ -80,6 +102,17 @@
         for (var i = l; i > -1; i--) {
             tree = tree.replace('<' + i + '>', parts[i]);
         }
+
+        // replace back special characters
+        Object.keys(alias).forEach(function(key) {
+            var reg = new RegExp(alias[key], 'g');
+            tree = tree.replace(reg, key);
+        });
+
+        // replace a character inside of string
+        function replaceAt(input, value, index) {
+            return input.substring(0, index) + value + input.substring(index + 1, input.length);
+        };
 
         // is valid String
         function isString(y, stringOnly) {
