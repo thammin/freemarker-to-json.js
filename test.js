@@ -117,7 +117,11 @@ test('parse typed array.', function(t) {
     }, {
         a: 2,
         b: 2,
-        c: 5
+        c: [{
+            y: 5
+        }, {
+            z: 3
+        }]
     }];
 
     var input;

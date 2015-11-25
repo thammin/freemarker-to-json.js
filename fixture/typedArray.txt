@@ -1,1 +1,1 @@
-[Card(a=1, b=2, c=か(き)), Card(a=2, b=2, c=5)]
+[Card(a=1, b=2, c=か(き)), Card(a=2, b=2, c=[Value(y=5), Value(z=3)])]

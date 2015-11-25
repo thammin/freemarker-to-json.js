@@ -14,7 +14,7 @@
         var BOOLREG = /^true$|^false$/;
         var NUMREG = /^-?\d+\.?\d*$/;
         var MARKREG = /<\d+>/;
-        var TYPEREG = /\w+\(/;
+        var TYPEREG = /\w+\(/g;
 
         var alias = {
             '(': '<ob>',
@@ -49,7 +49,7 @@
                     continue;
                 } else {
                     var match = _part.match(TYPEREG);
-                    startSym = match[0];
+                    startSym = match[match.length - 1];
                     endSym = endTag[0];
                 }
             }
