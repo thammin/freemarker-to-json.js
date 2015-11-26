@@ -1,6 +1,6 @@
 var fs = require('fs');
 var test = require('tape');
-var parser = require('./parser');
+var parser = require('./freemarker-to-json');
 
 var ftlObject = fs.readFileSync('./fixture/object.txt', 'utf8');
 var ftlEmptyArray = fs.readFileSync('./fixture/emptyArray.txt', 'utf8');

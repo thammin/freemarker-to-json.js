@@ -6,7 +6,7 @@
     "thammin"
   ],
   "description": "A bad way to parse freemarker object to json.",
-  "main": "parser.js",
+  "main": "freemarker-to-json.js",
   "moduleType": [
     "globals",
     "node"

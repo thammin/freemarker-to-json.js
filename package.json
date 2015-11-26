@@ -2,7 +2,7 @@
   "name": "freemarker-to-json.js",
   "version": "0.1.0",
   "description": "Parse ftl object string to JSON string in a bad way..",
-  "main": "parser.js",
+  "main": "freemarker-to-json.js",
   "scripts": {
     "test": "node test.js"
   },
