@@ -1,0 +1,28 @@
+{
+  "name": "freemarker-to-json.js",
+  "version": "0.1.0",
+  "homepage": "https://github.com/thammin/freemarker-to-json.js",
+  "authors": [
+    "thammin"
+  ],
+  "description": "A bad way to parse freemarker object to json.",
+  "main": "parser.js",
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "freemarker",
+    "ftl",
+    "object",
+    "json"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test.js",
+    "fixture"
+  ]
+}
