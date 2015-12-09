@@ -15,6 +15,7 @@
         var NUMREG = /^-?\d+\.?\d*$/;
         var MARKREG = /<\d+>/;
         var TYPEREG = /\w+\(/g;
+        var TEMPSTRREG= /""/;
 
         var alias = {
             '(': '<ob>',
@@ -23,7 +24,8 @@
             ']': '<csb>'
         };
 
-        var tree = s;
+        // add empty string marker
+        var tree = s.replace(/\=([,\}+])/g, '=""$1');
         var parts = [];
         var count = 0;
 
@@ -116,7 +118,7 @@
 
         // is valid String
         function isString(y, stringOnly) {
-            return stringOnly ? !MARKREG.test(y) : !(NULLREG.test(y) || BOOLREG.test(y) || NUMREG.test(y) || MARKREG.test(y));
+            return !TEMPSTRREG.test(y) && (stringOnly ? !MARKREG.test(y) : !(NULLREG.test(y) || BOOLREG.test(y) || NUMREG.test(y) || MARKREG.test(y)));
         }
 
         return JSON.parse(tree);

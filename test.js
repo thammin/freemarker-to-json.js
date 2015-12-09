@@ -8,6 +8,7 @@ var ftlEmptyObject = fs.readFileSync('./fixture/emptyObject.txt', 'utf8');
 var ftlPlainArray = fs.readFileSync('./fixture/plainArray.txt', 'utf8');
 var ftlTypedArray = fs.readFileSync('./fixture/typedArray.txt', 'utf8');
 var ftlWeirdJapaneseWords = fs.readFileSync('./fixture/japanese.txt', 'utf8');
+var ftlEmptyString = fs.readFileSync('./fixture/emptyString.txt', 'utf8');
 
 test('parse ftl object string to json', function(t) {
     var output = {
@@ -150,5 +151,33 @@ test('parse \[\]\(\) correctly if it could predict as string', function(t) {
     }
 
     t.deepEqual(input, output);
+    t.end();
+});
+
+test('parse empty string', function(t) {
+    var output1 = {
+        a: '',
+        b: 3,
+        c: ''
+    };
+    var output2 = {
+        a: '',
+        b: '3',
+        c: ''
+    };
+
+    var input1;
+    var input2;
+    try {
+        input1 = parser(ftlEmptyString);
+        input2 = parser(ftlEmptyString, {
+            stringOnly: true
+        });
+    } catch(e) {
+        t.fail(e.message);
+    }
+
+    t.deepEqual(input1, output1);
+    t.deepEqual(input2, output2);
     t.end();
 });
