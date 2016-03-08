@@ -29,6 +29,10 @@
         var parts = [];
         var count = 0;
 
+        if (tree === '') {
+          return '';
+        }
+
         while (ENDREG.test(tree)) {
             var endTag = ENDREG.exec(tree);
             var endPos = endTag.index;

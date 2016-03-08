@@ -181,3 +181,17 @@ test('parse empty string', function(t) {
     t.deepEqual(input2, output2);
     t.end();
 });
+
+test('return empty string if input is empty', function(t) {
+    var output = '';
+    var input = '';
+    try {
+        input = parser(input);
+    } catch(e) {
+        t.fail(e.message);
+    }
+
+    t.deepEqual(input, output);
+    t.end();
+});
+
