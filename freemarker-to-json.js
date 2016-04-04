@@ -25,7 +25,7 @@
         };
 
         // add empty string marker
-        var tree = s.replace(/\=([,\}+])/g, '=""$1');
+        var tree = s.replace(/\=([,\}])/g, '=""$1');
         var parts = [];
         var count = 0;
 

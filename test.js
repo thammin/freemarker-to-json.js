@@ -17,7 +17,8 @@ test('parse ftl object string to json', function(t) {
         c: 'iamstring',
         d: {
             e: [2, false, 'iam string2', {
-                f: 'end omg'
+                f: 'end omg',
+                g: '+2%'
             }]
         },
         ep: []
@@ -41,7 +42,8 @@ test('parse all values include number and boolean to string type.', function(t) 
         c: 'iamstring',
         d: {
             e: ['2', 'false', 'iam string2', {
-                f: 'end omg'
+                f: 'end omg',
+                g: '+2%'
             }]
         },
         ep: []

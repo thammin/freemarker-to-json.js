@@ -1,1 +1,1 @@
-{a=1, b=true, c=iamstring, d={e=[2, false, iam string2, {f=end omg}]}, ep=[]}
+{a=1, b=true, c=iamstring, d={e=[2, false, iam string2, {f=end omg, g=+2%}]}, ep=[]}
